@@ -120,4 +120,4 @@ The demo video is sped up to showcase the functionality quickly. Actual generati
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [Remith R Nair]
