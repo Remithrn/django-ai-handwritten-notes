@@ -1,0 +1,59 @@
+# Byte-compiled files
+*.py[cod]
+__pycache__/
+*.so
+*.pyd
+
+# Django stuff
+db.sqlite3
+db.sqlite3-journal
+
+# Media and static files
+/media/
+staticfiles/
+
+# Environment variables
+*.env
+
+# IDE-specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and debug files
+*.log
+*.bak
+*.tmp
+
+# Build and distribution directories
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Coverage and testing files
+htmlcov/
+.coverage
+*.cover
+*.coverage.*
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker files
+docker-compose.override.yml
+*.local
+
+# Nginx-related files (if applicable)
+*.crt
+*.key

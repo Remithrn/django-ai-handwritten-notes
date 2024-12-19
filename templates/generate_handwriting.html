@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Handwriting Generator</title>
+    <script src="{% static 'htmx.min.js' %}" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-secondary-900 to-secondary-800 text-white min-h-screen">
+    <div class="max-w-4xl mx-auto p-6">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-primary-300 to-primary-500 bg-clip-text text-transparent">
+                AI Handwriting Generator
+            </h1>
+            <p class="mt-4 text-secondary-400">Transform text into beautiful handwritten content</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="bg-secondary-800/50 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-secondary-700">
+            <form hx-post="{% url 'generate_handwriting' %}"
+                  hx-target="#results"
+                  hx-indicator="#loading-spinner"
+                  hx-on="htmx:afterOnLoad: document.getElementById('text').value = '';"
+                  class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Text Input -->
+                <div>
+                    <label for="text" class="block text-sm font-medium text-secondary-300 mb-2">
+                        Text to Generate
+                    </label>
+                    <textarea 
+                        id="text" 
+                        name="text" 
+                        rows="3" 
+                        class="w-full px-4 py-3 bg-secondary-900/50 border border-secondary-600 rounded-xl 
+                               focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+                               placeholder-secondary-500 text-white transition-all"
+                        placeholder="Enter your text here..."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Style Selection -->
+                    <div>
+                        <label for="style" class="block text-sm font-medium text-secondary-300 mb-2">
+                            Writing Style
+                        </label>
+                        <select 
+                            id="style" 
+                            name="style" 
+                            class="w-full px-4 py-3 bg-secondary-900/50 border border-secondary-600 rounded-xl
+                                   focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+                                   text-white transition-all"
+                            required
+                        >
+                            <option value="">Select style</option>
+                            <option value="very neat">Neat</option>
+                            <option value="scrawling messy">Messy</option>
+                            <option value="stylish cursive">Stylish</option>
+                        </select>
+                    </div>
+
+                    <!-- Ink Color -->
+                    <div>
+                        <label for="ink_color" class="block text-sm font-medium text-secondary-300 mb-2">
+                            Ink Color
+                        </label>
+                        <select 
+                            id="ink_color" 
+                            name="ink_color" 
+                            class="w-full px-4 py-3 bg-secondary-900/50 border border-secondary-600 rounded-xl
+                                   focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+                                   text-white transition-all"
+                            required
+                        >
+                            <option value="">Select color</option>
+                            <option value="black">Black</option>
+                            <option value="blue">Blue</option>
+                            <option value="red">Red</option>
+                        </select>
+                    </div>
+
+                    <!-- Paper Type -->
+                    <div>
+                        <label for="paper_type" class="block text-sm font-medium text-secondary-300 mb-2">
+                            Paper Type
+                        </label>
+                        <select 
+                            id="paper_type" 
+                            name="paper_type" 
+                            class="w-full px-4 py-3 bg-secondary-900/50 border border-secondary-600 rounded-xl
+                                   focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+                                   text-white transition-all"
+                            required
+                        >
+                            <option value="">Select paper</option>
+                            <option value="white paper">White Paper</option>
+                            <option value="old stained parchment">Aged parchment</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Generate Button with Loading Spinner -->
+                <button 
+                    type="submit"
+                    id="generate-button" 
+                    class="w-full bg-gradient-to-r from-primary-500 to-primary-700 hover:from-primary-600 hover:to-primary-800
+                           text-white font-medium py-4 px-6 rounded-xl transition-all transform hover:scale-[0.99]
+                           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-secondary-900
+                           flex justify-center items-center space-x-2"
+                >
+                    <span>Generate Handwriting</span>
+                    <div id="loading-spinner" class="w-5 h-5 border-4 border-transparent border-t-white rounded-full animate-spin hidden"></div>
+                </button>
+            </form>
+
+            <!-- Results Container -->
+            <div id="results" class="mt-8 space-y-6"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-secondary-400 text-sm">
+            <p>Powered by AI • Made with ❤️</p>
+        </footer>
+    </div>
+
+    <script>
+        const generateButton = document.getElementById("generate-button");
+        const spinner = document.getElementById("loading-spinner");
+
+        // Disable button and show spinner during request
+        document.body.addEventListener("htmx:beforeRequest", function () {
+            generateButton.disabled = true;
+            spinner.classList.remove("hidden");
+        });
+
+        // Re-enable button and hide spinner after request
+        document.body.addEventListener("htmx:afterRequest", function () {
+            generateButton.disabled = false;
+            spinner.classList.add("hidden");
+        });
+
+        // Handle server errors gracefully
+        document.body.addEventListener("htmx:responseError", function (event) {
+            generateButton.disabled = false;
+            spinner.classList.add("hidden");
+
+            // Display error message
+            const results = document.getElementById("results");
+            results.innerHTML = `
+                <div class="text-red-500">Something went wrong! Please try again.</div>
+            `;
+        });
+    </script>
+</body>
+</html>
