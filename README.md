@@ -69,8 +69,6 @@ python manage.py runserver
 
 ## 📸 Screenshots
 
-[Add your application screenshots here]
-
 ## 🤝 Contributing
 
 1. Fork the repository
